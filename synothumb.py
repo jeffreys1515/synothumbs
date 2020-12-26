@@ -52,7 +52,7 @@ class convertImage(threading.Thread):
             self.imagePath=self.queueIMG.get()
             self.imageDir,self.imageName = os.path.split(self.imagePath)
             self.thumbDir=os.path.join(self.imageDir,"@eaDir",self.imageName)
-            print ("\t[-]Now working on %s" % (self.imagePath))
+            print (str(self.queueIMG.qsize()) + "\t[-]Now working on %s" % (self.imagePath))
             if os.path.isfile(os.path.join(self.thumbDir,xlName)) != 1:
                 if os.path.isdir(self.thumbDir) != 1:
                     try:os.makedirs(self.thumbDir)
@@ -138,7 +138,7 @@ class convertVideo(threading.Thread):
             self.videoDir,self.videoName = os.path.split(self.videoPath)
             self.thumbDir=os.path.join(self.videoDir,"@eaDir",self.videoName)
             if os.path.isfile(os.path.join(self.thumbDir,xlName)) != 1:
-                print ("Now working on %s" % (self.videoPath))
+                print (str(self.queueVID.qsize()) + "Now working on %s" % (self.videoPath))
                 if os.path.isdir(self.thumbDir) != 1:
                     try:os.makedirs(self.thumbDir)
                     except:continue
