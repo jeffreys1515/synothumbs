@@ -28,7 +28,7 @@ from io import StringIO
 #########################################################################
 # Settings
 #########################################################################
-NumOfThreads=8  # Number of threads
+NumOfThreads=12  # Number of threads
 startTime=time.time()
 imageExtensions=['.jpg','.png','.jpeg','.tif','.bmp','.cr2'] #possibly add other raw types?
 videoExtensions=['.mov','.m4v','mp4']
@@ -90,25 +90,29 @@ class convertImage(threading.Thread):
                             self.image=self.image.rotate(rotate_values[self.orientation])
 
                 #### end of orientation part
-
-                self.image.thumbnail(xlSize, Image.ANTIALIAS)
-                self.image.save(os.path.join(self.thumbDir,xlName), quality=90)
-                self.image.thumbnail(lSize, Image.ANTIALIAS)
-                self.image.save(os.path.join(self.thumbDir,lName), quality=90)
-                self.image.thumbnail(bSize, Image.ANTIALIAS)
-                self.image.save(os.path.join(self.thumbDir,bName), quality=90)
-                self.image.thumbnail(mSize, Image.ANTIALIAS)
-                self.image.save(os.path.join(self.thumbDir,mName), quality=90)
-                self.image.thumbnail(sSize, Image.ANTIALIAS)
-                self.image.save(os.path.join(self.thumbDir,sName), quality=90)
-                self.image.thumbnail(pSize, Image.ANTIALIAS)
-                # pad out image
-                self.image_size = self.image.size
-                self.preview_img = self.image.crop((0, 0, pSize[0], pSize[1]))
-                self.offset_x = max((pSize[0] - self.image_size[0]) / 2, 0)
-                self.offset_y = max((pSize[1] - self.image_size[1]) / 2, 0)
-                self.preview_img = ImageChops.offset(self.preview_img, int(self.offset_x), int(self.offset_y)) # offset has to be integer, not float
-                self.preview_img.save(os.path.join(self.thumbDir,pName), quality=90)
+                
+                try:
+                    self.image.thumbnail(xlSize, Image.ANTIALIAS)
+                    self.image.save(os.path.join(self.thumbDir,xlName), quality=90)
+                    self.image.thumbnail(lSize, Image.ANTIALIAS)
+                    self.image.save(os.path.join(self.thumbDir,lName), quality=90)
+                    self.image.thumbnail(bSize, Image.ANTIALIAS)
+                    self.image.save(os.path.join(self.thumbDir,bName), quality=90)
+                    self.image.thumbnail(mSize, Image.ANTIALIAS)
+                    self.image.save(os.path.join(self.thumbDir,mName), quality=90)
+                    self.image.thumbnail(sSize, Image.ANTIALIAS)
+                    self.image.save(os.path.join(self.thumbDir,sName), quality=90)
+                    self.image.thumbnail(pSize, Image.ANTIALIAS)
+                    # pad out image
+                    self.image_size = self.image.size
+                    self.preview_img = self.image.crop((0, 0, pSize[0], pSize[1]))
+                    self.offset_x = max((pSize[0] - self.image_size[0]) / 2, 0)
+                    self.offset_y = max((pSize[1] - self.image_size[1]) / 2, 0)
+                    self.preview_img = ImageChops.offset(self.preview_img, int(self.offset_x), int(self.offset_y)) # offset has to be integer, not float
+                    self.preview_img.save(os.path.join(self.thumbDir,pName), quality=90)
+                except:
+                    continue
+            
             self.queueIMG.task_done()
 
 #########################################################################
@@ -188,7 +192,7 @@ def main():
                         imageList.append(os.path.join(path,file))
 
     print ("[+] We have found %i images in search directory" % len(imageList))
-    input("\tPress Enter to continue or Ctrl-C to quit")
+    #input("\tPress Enter to continue or Ctrl-C to quit")
 
     #spawn a pool of threads
     for i in range(NumOfThreads): #number of threads
@@ -215,7 +219,7 @@ def main():
                         videoList.append(os.path.join(path,file))
 
     print ("[+] We have found %i videos in search directory" % len(videoList))
-    input("\tPress Enter to continue or Ctrl-C to quit")
+    #input("\tPress Enter to continue or Ctrl-C to quit")
 
     #spawn a pool of threads
     for i in range(NumOfThreads): #number of threads
