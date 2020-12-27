@@ -13,7 +13,7 @@
 #       v5.0 - addition of PREVIEW thumbnail type; check for proper video conversion command
 #       v4.0 - addition of autorate (thanks Markus Luisser)
 #       v3.1 - filename fix (_ instead of :) and improvement of rendering (antialias and quality=90 - thanks to alkopedia)
-#       v3.0 - Video support 
+#       v3.0 - Video support
 #       v2.1 - CR2 raw support
 #       v2.0 - multithreaded
 #       v1.0 - First release
@@ -90,7 +90,7 @@ class convertImage(threading.Thread):
                             self.image=self.image.rotate(rotate_values[self.orientation])
 
                 #### end of orientation part
-                
+
                 try:
                     self.image.thumbnail(xlSize, Image.ANTIALIAS)
                     self.image.save(os.path.join(self.thumbDir,xlName), quality=90)
@@ -112,7 +112,7 @@ class convertImage(threading.Thread):
                     self.preview_img.save(os.path.join(self.thumbDir,pName), quality=90)
                 except:
                     continue
-            
+
             self.queueIMG.task_done()
 
 #########################################################################
@@ -183,7 +183,9 @@ def main():
     # Finds all images of type in extensions array
     imageList=[]
     print ("[+] Looking for images and populating queue (This might take a while...)")
-    for path, subFolders, files in os.walk(rootdir):
+    for path, dirs, files in os.walk(rootdir):
+        if "@eaDir" in dirs:
+            dirs.remove("@eaDir")
         for file in files:
             ext=os.path.splitext(file)[1].lower()
             if any(x in ext for x in imageExtensions):#check if extensions matches ext
@@ -210,7 +212,9 @@ def main():
     # Finds all videos of type in extensions array
     videoList=[]
     print ("[+] Looking for videos and populating queue (This might take a while...)")
-    for path, subFolders, files in os.walk(rootdir):
+    for path, dirs, files in os.walk(rootdir):
+        if "@eaDir" in dirs:
+            dirs.remove("@eaDir")
         for file in files:
             ext=os.path.splitext(file)[1].lower()
             if any(x in ext for x in videoExtensions):#check if extensions matches ext
