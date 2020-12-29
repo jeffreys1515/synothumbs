@@ -23,6 +23,7 @@
 import os,sys,queue,threading,time,subprocess,shlex
 from PIL import Image,ImageChops #PIL is provided by Pillow
 from io import StringIO
+import uuid
 
 
 #########################################################################
@@ -142,11 +143,11 @@ class convertVideo(threading.Thread):
                 self.videoDir,self.videoName = os.path.split(self.videoPath)
                 self.thumbDir=os.path.join(self.videoDir,"@eaDir",self.videoName)
                 if os.path.isfile(os.path.join(self.thumbDir,xlName)) != 1:
-                    print (str(self.queueVID.qsize()) + " : " + str(self.queueVID.unfinished_tasks) + "\tNow working on %s" % (self.videoPath))
+                    print (str(self.queueVID.qsize()) + " : " + str(self.queueVID.unfinished_tasks) + "\t[-]Now working on %s" % (self.videoPath))
                     if os.path.isdir(self.thumbDir) != 1:
                         try:os.makedirs(self.thumbDir)
                         except:continue
-                    
+
                     # Check video conversion command and convert video to flv
                     if self.is_tool("ffmpeg"):
                         self.ffmpegcmd = "ffmpeg -loglevel panic -i '%s' -y -ar 44100 -r 12 -ac 2 -f flv -qscale 5 -s 320x180 -aspect 320:180 '%s/SYNOPHOTO:FILM.flv'" % (self.videoPath,self.thumbDir) # ffmpeg replaced by avconv on ubuntu
@@ -157,7 +158,7 @@ class convertVideo(threading.Thread):
                     self.ffmpegproc.communicate()[0]
 
                     # Create video thumbs
-                    self.tempThumb=os.path.join("/tmp",os.path.splitext(self.videoName)[0]+".jpg")
+                    self.tempThumb=os.path.join("/tmp", str(uuid.uuid4()) +".jpg")
                     if self.is_tool("ffmpeg"):
                         self.ffmpegcmdThumb = "ffmpeg -loglevel panic -i '%s' -y -an -ss 00:00:03 -an -r 1 -vframes 1 '%s'" % (self.videoPath,self.tempThumb) # ffmpeg replaced by avconv on ubuntu
                     elif self.is_tool("avconv"):
